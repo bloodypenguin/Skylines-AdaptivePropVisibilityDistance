@@ -1,4 +1,5 @@
-﻿using AdaptivePropVisibilityDistance.Redirection;
+﻿using System.Runtime.CompilerServices;
+using AdaptivePropVisibilityDistance.Redirection;
 using ColossalFramework;
 using UnityEngine;
 
@@ -31,6 +32,7 @@ namespace AdaptivePropVisibilityDistance.Detours
         }
 
         [RedirectReverse]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void RenderInstance(ref Building b, RenderManager.CameraInfo cameraInfo, ushort buildingID,
             int layerMask, BuildingInfo info, ref RenderManager.Instance data)
         {

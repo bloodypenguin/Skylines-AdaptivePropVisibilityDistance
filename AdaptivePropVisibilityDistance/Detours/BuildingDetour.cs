@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 using AdaptivePropVisibilityDistance.Redirection;
 using ColossalFramework;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace AdaptivePropVisibilityDistance.Detours
                 return;
             BuildingInfo info = b.Info;
             //begin mod
-            if ((layerMask & 1 << info.m_prefabDataLayer) == 0 && info.m_buildingAI.GetType() != typeof(ParkAI))
+            if ((layerMask & 1 << info.m_prefabDataLayer) == 0 && !(info.m_buildingAI is PlayerBuildingAI || info.m_buildingAI is DecorationBuildingAI))
                 //end mod
                 return;
             Vector3 point = b.m_position;

@@ -13,11 +13,16 @@ namespace AdaptivePropVisibilityDistance.Detours
         public static void RenderInstance(ref Building b, RenderManager.CameraInfo cameraInfo, ushort buildingID,
             int layerMask)
         {
-            if (b.m_flags == Building.Flags.None)
+            if ((b.m_flags & (Building.Flags.Created | Building.Flags.Deleted | Building.Flags.Hidden)) != Building.Flags.Created)
                 return;
             BuildingInfo info = b.Info;
             //begin mod
-            if ((layerMask & 1 << info.m_prefabDataLayer) == 0 && !(info.m_buildingAI is PlayerBuildingAI || info.m_buildingAI is DecorationBuildingAI))
+            if (info == null)
+            {
+                return;
+            }
+            var ai = info.m_buildingAI;
+            if ((layerMask & 1 << info.m_prefabDataLayer) == 0 && !(ai is PlayerBuildingAI || ai is DecorationBuildingAI/* || ai is DummyBuildingAI*/)) //TODO(earalov): do we need to uncomment that?
                 //end mod
                 return;
             Vector3 point = b.m_position;

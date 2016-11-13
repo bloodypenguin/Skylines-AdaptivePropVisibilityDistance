@@ -1,4 +1,5 @@
-﻿using AdaptivePropVisibilityDistance.Redirection;
+﻿using System.Threading;
+using AdaptivePropVisibilityDistance.Redirection;
 using UnityEngine;
 
 namespace AdaptivePropVisibilityDistance.Detours
@@ -9,20 +10,17 @@ namespace AdaptivePropVisibilityDistance.Detours
         [RedirectMethod]
         public override void RefreshLevelOfDetail()
         {
-            float num = RenderManager.LevelOfDetailFactor * 200f;
-            if (m_generatedInfo.m_triangleArea == 0.0)
+            float num = RenderManager.LevelOfDetailFactor *Options.lodFactorMultiplier;
+            if (m_generatedInfo.m_triangleArea == 0.0f)
             {
-                m_maxRenderDistance = 1000f;
+                m_maxRenderDistance = Options.fallbackRenderDistance;
             }
             else
             {
-                m_maxRenderDistance = (float)(Mathf.Sqrt(m_generatedInfo.m_triangleArea) * (double)num + 100.0);
-                //begin mod
-                //end mod
+                m_maxRenderDistance = (float)(Mathf.Sqrt(m_generatedInfo.m_triangleArea) * (double)num + Options.distanceOffset);
+                this.m_maxRenderDistance = Mathf.Min(Options.renderDistanceThreshold, this.m_maxRenderDistance);
             }
-            //begin mid
-            m_lodRenderDistance = m_isDecal || m_isMarker ? 0.0f : (!(m_lodMesh != null) ? m_maxRenderDistance : m_maxRenderDistance  * 0.125f);
-            //end mod
+            m_lodRenderDistance = m_isDecal || m_isMarker ? 0.0f : (!(m_lodMesh != null) ? m_maxRenderDistance : m_maxRenderDistance *Options.lodDistanceMultiplier);
             if (m_effects == null)
                 return;
             for (int index = 0; index < m_effects.Length; ++index)
@@ -30,8 +28,7 @@ namespace AdaptivePropVisibilityDistance.Detours
                 if (m_effects[index].m_effect != null)
                     m_maxRenderDistance = Mathf.Max(m_maxRenderDistance, m_effects[index].m_effect.RenderDistance());
             }
-            //begin mod
-            //end mod
+            this.m_maxRenderDistance = Mathf.Min(Options.renderDistanceThresholdEffects, this.m_maxRenderDistance);
         }
     }
 }

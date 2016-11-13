@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using AdaptivePropVisibilityDistance.Redirection;
+using AdaptivePropVisibilityDistance.Redirection.Attributes;
 using AdaptivePropVisibilityDistance.Redirection.Extensions;
 
 namespace AdaptivePropVisibilityDistance.Redirection
@@ -15,7 +16,7 @@ namespace AdaptivePropVisibilityDistance.Redirection
 
         public static void Deploy()
         {
-            _types = Assembly.GetExecutingAssembly().GetTypes();
+            _types = Assembly.GetExecutingAssembly().GetTypes().Where(t => t.GetCustomAttributes(typeof(TargetTypeAttribute), false).Length > 0).ToArray();
             foreach (var type in _types)
             {
                 type.Redirect();

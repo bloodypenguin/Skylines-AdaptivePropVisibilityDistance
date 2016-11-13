@@ -66,6 +66,7 @@
     <Compile Include="Redirection\Attributes\TargetTypeAttribute.cs" />
     <Compile Include="Redirection\Tuple.cs" />
     <Compile Include="Redirection\Extensions\TypeExtension.cs" />
+    <Compile Include="Refresher.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

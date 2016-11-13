@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using AdaptivePropVisibilityDistance.OptionsFramework.Attibutes;
 using ColossalFramework.UI;
 using ICities;
+using UnityEngine;
 
 namespace AdaptivePropVisibilityDistance.OptionsFramework
 {
@@ -49,18 +52,18 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
             {
                 return group.AddCheckbox<T>(description, name, checkboxAttribute);
             }
-            var textfieldAttribute = OptionsWrapper<T>.Options.GetAttribute<T,TextfieldAttribute>(name);
+            var textfieldAttribute = OptionsWrapper<T>.Options.GetAttribute<T, TextfieldAttribute>(name);
             if (textfieldAttribute != null)
             {
                 return group.AddTextfield<T>(description, name, textfieldAttribute);
             }
             var dropDownAttribute = OptionsWrapper<T>.Options.GetAttribute<T, DropDownAttribute>(name);
-            if (dropDownAttribute!=null)
+            if (dropDownAttribute != null)
             {
                 return group.AddDropdown<T>(description, name, dropDownAttribute);
             }
             var sliderAttribute = OptionsWrapper<T>.Options.GetAttribute<T, SliderAttribute>(name);
-            if (sliderAttribute!=null)
+            if (sliderAttribute != null)
             {
                 return group.AddSlider<T>(description, name, sliderAttribute);
             }
@@ -76,17 +79,19 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
             try
             {
                 defaultSelection = attr.Items.First(kvp => kvp.Value == defaultCode).Value;
-            } catch {
+            }
+            catch
+            {
                 defaultSelection = 0;
                 property.SetValue(OptionsWrapper<T>.Options, attr.Items.First().Value, null);
             }
-            return (UIDropDown) group.AddDropdown(text, attr.Items.Select(kvp => kvp.Key).ToArray(), defaultSelection, sel =>
-            {
-                var code = attr.Items[sel].Value;
-                property.SetValue(OptionsWrapper<T>.Options, code, null);
-                OptionsWrapper<T>.SaveOptions();
-                attr.Action<int>().Invoke(code);
-            });
+            return (UIDropDown)group.AddDropdown(text, attr.Items.Select(kvp => kvp.Key).ToArray(), defaultSelection, sel =>
+           {
+               var code = attr.Items[sel].Value;
+               property.SetValue(OptionsWrapper<T>.Options, code, null);
+               OptionsWrapper<T>.SaveOptions();
+               attr.Action<int>().Invoke(code);
+           });
         }
 
         private static UICheckBox AddCheckbox<T>(this UIHelperBase group, string text, string propertyName, CheckboxAttribute attr) where T : IModOptions
@@ -135,16 +140,47 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
                 });
         }
 
-        private static UICheckBox AddSlider<T>(this UIHelperBase group, string text, string propertyName, SliderAttribute attr) where T : IModOptions
+        private static UISlider AddSlider<T>(this UIHelperBase group, string text, string propertyName, SliderAttribute attr) where T : IModOptions
         {
             var property = typeof(T).GetProperty(propertyName);
-            return (UICheckBox)group.AddSlider(text, attr.Min, attr.Max, attr.Step, (float)property.GetValue(OptionsWrapper<T>.Options, null),
+            UILabel valueLabel = null;
+
+            var helper = group as UIHelper;
+            if (helper != null)
+            {
+                var type = typeof(UIHelper).GetField("m_Root", BindingFlags.NonPublic | BindingFlags.Instance);
+                if (type != null)
+                {
+                    var panel = type.GetValue(helper) as UIComponent;
+                    valueLabel = panel?.AddUIComponent<UILabel>();
+                }
+            }
+
+
+            var slider = (UISlider)group.AddSlider(text, attr.Min, attr.Max, attr.Step, (float)property.GetValue(OptionsWrapper<T>.Options, null),
                 f =>
                 {
                     property.SetValue(OptionsWrapper<T>.Options, f, null);
                     OptionsWrapper<T>.SaveOptions();
                     attr.Action<float>().Invoke(f);
+                    if (valueLabel != null)
+                    {
+                        valueLabel.text = f.ToString(CultureInfo.InvariantCulture);
+                    }
                 });
+            var nameLabel = slider.parent.Find<UILabel>("Label");
+            if (nameLabel != null)
+            {
+                nameLabel.width = nameLabel.textScale * nameLabel.font.size * nameLabel.text.Length;
+            }
+            if (valueLabel == null)
+            {
+                return slider;
+            }
+            valueLabel.AlignTo(slider, UIAlignAnchor.TopLeft);
+            valueLabel.relativePosition = new Vector3(240, 0, 0);
+            valueLabel.text = property.GetValue(OptionsWrapper<T>.Options, null).ToString();
+            return slider;
         }
     }
 }

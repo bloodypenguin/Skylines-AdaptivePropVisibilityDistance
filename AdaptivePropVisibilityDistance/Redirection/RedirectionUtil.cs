@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using AdaptivePropVisibilityDistance.Redirection.Attributes;
+using AdaptivePropVisibilityDistance.Redirection.Extensions;
 
 namespace AdaptivePropVisibilityDistance.Redirection
 {
@@ -52,7 +53,7 @@ namespace AdaptivePropVisibilityDistance.Redirection
             {
                 throw new Exception($"No target type specified for {type.FullName}!");
             }
-            if (!GetMethods<RedirectMethodAttribute>(type).Any() && !GetMethods<RedirectReverseAttribute>(type).Any())
+            if (!GetRedirectedMethods<RedirectMethodAttribute>(type).Any() && !GetRedirectedMethods<RedirectReverseAttribute>(type).Any())
             {
                 throw new Exception($"No redirects specified for {type.FullName}!");
             }
@@ -64,14 +65,23 @@ namespace AdaptivePropVisibilityDistance.Redirection
 
         private static void RedirectMethods(Type type, Type targetType, Dictionary<MethodInfo, RedirectCallsState> redirects, bool onCreated)
         {
-            foreach (var method in GetMethods<RedirectMethodAttribute>(type, onCreated))
+            foreach (var method in GetRedirectedMethods<RedirectMethodAttribute>(type, onCreated))
             {
                 //                UnityEngine.Debug.Log($"Redirecting {targetType.Name}#{method.Name}...");
                 RedirectMethod(targetType, method, redirects);
             }
         }
 
-        private static IEnumerable<MethodInfo> GetMethods<T>(Type type) where T : RedirectAttribute
+        private static IEnumerable<MethodInfo> GetRedirectedMethods<T>(Type type, bool onCreated) where T : RedirectAttribute
+        {
+            return GetRedirectedMethods<T>(type).Where(method =>
+                {
+                    var redirectAttributes = method.GetCustomAttributes(typeof(T), false);
+                    return ((T)redirectAttributes[0]).OnCreated == onCreated;
+                });
+        }
+
+        private static IEnumerable<MethodInfo> GetRedirectedMethods<T>(Type type) where T : RedirectAttribute
         {
             return type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic)
                 .Where(method =>
@@ -81,18 +91,9 @@ namespace AdaptivePropVisibilityDistance.Redirection
                 });
         }
 
-        private static IEnumerable<MethodInfo> GetMethods<T>(Type type, bool onCreated) where T : RedirectAttribute
-        {
-            return GetMethods<T>(type).Where(method =>
-                {
-                    var redirectAttributes = method.GetCustomAttributes(typeof(T), false);
-                    return ((T)redirectAttributes[0]).OnCreated == onCreated;
-                });
-        }
-
         private static void RedirectReverse(Type type, Type targetType, Dictionary<MethodInfo, RedirectCallsState> redirects, bool onCreated)
         {
-            foreach (var method in GetMethods<RedirectReverseAttribute>(type, onCreated))
+            foreach (var method in GetRedirectedMethods<RedirectReverseAttribute>(type, onCreated))
             {
                 //                UnityEngine.Debug.Log($"Redirecting reverse {targetType.Name}#{method.Name}...");
                 RedirectMethod(targetType, method, redirects, true);

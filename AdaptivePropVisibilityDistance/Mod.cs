@@ -1,4 +1,5 @@
-﻿using ICities;
+﻿using AdaptivePropVisibilityDistance.OptionsFramework;
+using ICities;
 
 namespace AdaptivePropVisibilityDistance
 {
@@ -6,5 +7,10 @@ namespace AdaptivePropVisibilityDistance
     {
         public string Name => "Adaptive Prop Visibility Distance";
         public string Description => "Adaptive Prop Visibility Distance";
+
+        public void OnSettingsUI(UIHelperBase helper)
+        {
+            helper.AddOptionsGroup<Options>();
+        }
     }
 }

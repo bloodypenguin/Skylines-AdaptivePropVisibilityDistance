@@ -1,17 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
-using AdaptivePropVisibilityDistance.Redirection;
-using ColossalFramework.IO;
+﻿using AdaptivePropVisibilityDistance.Redirection;
 using ICities;
-using UnityEngine;
 
 namespace AdaptivePropVisibilityDistance
 {
     public class LoadingExtension : LoadingExtensionBase
     {
-
-
-
         public override void OnCreated(ILoading loading)
         {
             base.OnCreated(loading);
@@ -23,7 +16,5 @@ namespace AdaptivePropVisibilityDistance
             base.OnReleased();
             AssemblyRedirector.Revert();
         }
-
-
     }
 }

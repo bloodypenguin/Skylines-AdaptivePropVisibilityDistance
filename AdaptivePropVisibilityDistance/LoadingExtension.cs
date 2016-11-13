@@ -10,40 +10,20 @@ namespace AdaptivePropVisibilityDistance
     public class LoadingExtension : LoadingExtensionBase
     {
 
-        private static Dictionary<MethodInfo, RedirectCallsState> redirects;
+
 
         public override void OnCreated(ILoading loading)
         {
             base.OnCreated(loading);
-            Redirect();
+            AssemblyRedirector.Deploy();
         }
 
         public override void OnReleased()
         {
             base.OnReleased();
-            RevertRedirect();
+            AssemblyRedirector.Revert();
         }
 
-        public static void Redirect()
-        {
-            redirects = new Dictionary<MethodInfo, RedirectCallsState>();
-            foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
-            {
-                redirects.AddRange(RedirectionUtil.RedirectType(type));
-            }
-        }
 
-        private static void RevertRedirect()
-        {
-            if (redirects == null)
-            {
-                return;
-            }
-            foreach (var kvp in redirects)
-            {
-                RedirectionHelper.RevertRedirect(kvp.Key, kvp.Value);
-            }
-            redirects.Clear();
-        }
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System.Xml.Serialization;
-using AdaptivePropVisibilityDistance.OptionsFramework;
 using AdaptivePropVisibilityDistance.OptionsFramework.Attibutes;
 
 namespace AdaptivePropVisibilityDistance
 {
-
-    public class Options : IModOptions
+    [Options("AdaptivePropVisibilityDistance")]
+    public class Options
     {
         private const string TREES = "Trees";
         private const string PROPS = "Props";
@@ -49,10 +48,5 @@ namespace AdaptivePropVisibilityDistance
 
         [XmlIgnore]
         public const float FallbackRenderDistance = 1000f;//1000f default
-
-
-
-        [XmlIgnore]
-        public string FileName => "AdaptivePropVisibilityDistance";
     }
 }

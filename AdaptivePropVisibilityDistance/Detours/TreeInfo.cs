@@ -1,5 +1,4 @@
 ﻿using AdaptivePropVisibilityDistance.OptionsFramework;
-using AdaptivePropVisibilityDistance.Redirection;
 using AdaptivePropVisibilityDistance.Redirection.Attributes;
 using UnityEngine;
 

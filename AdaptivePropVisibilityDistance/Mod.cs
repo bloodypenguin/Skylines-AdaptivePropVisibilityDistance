@@ -1,4 +1,5 @@
 ﻿using AdaptivePropVisibilityDistance.OptionsFramework;
+using AdaptivePropVisibilityDistance.OptionsFramework.Extensions;
 using ICities;
 
 namespace AdaptivePropVisibilityDistance

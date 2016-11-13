@@ -1,12 +1,14 @@
 ﻿using System;
 using System.IO;
+using System.Xml;
 using System.Xml.Serialization;
+using AdaptivePropVisibilityDistance.OptionsFramework.Attibutes;
 using ColossalFramework.IO;
 using UnityEngine;
 
 namespace AdaptivePropVisibilityDistance.OptionsFramework
 {
-    public class OptionsWrapper<T> where T : IModOptions
+    public class OptionsWrapper<T>
     {
         private static T _instance;
 
@@ -18,7 +20,7 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
                 {
                     Ensure();
                 }
-                catch (Exception e)
+                catch (XmlException e)
                 {
                     UnityEngine.Debug.LogError("Error reading options XML file");
                     UnityEngine.Debug.LogException(e);
@@ -33,6 +35,12 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
             {
                 return;
             }
+            var type = typeof(T);
+            var attrs = type.GetCustomAttributes(typeof(OptionsAttribute), false);
+            if (attrs.Length != 1)
+            {
+                throw new Exception($"Type {type.FullName} is not an options type!");
+            }
             _instance = (T)Activator.CreateInstance(typeof(T));
             LoadOptions();
         }
@@ -42,7 +50,7 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
             try
             {
                 var xmlSerializer = new XmlSerializer(typeof(T));
-                var fileName = Path.Combine(DataLocation.localApplicationData, _instance.FileName);
+                var fileName = Path.Combine(DataLocation.localApplicationData, GetFileName());
                 if (!fileName.EndsWith(".xml"))
                 {
                     fileName = fileName + ".xml";
@@ -72,7 +80,7 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
             try
             {
                 var xmlSerializer = new XmlSerializer(typeof(T));
-                var fileName = Path.Combine(DataLocation.localApplicationData, _instance.FileName);
+                var fileName = Path.Combine(DataLocation.localApplicationData, GetFileName());
                 if (!fileName.EndsWith(".xml"))
                 {
                     fileName = fileName + ".xml";
@@ -86,6 +94,13 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
             {
                 Debug.LogException(e);
             }
+        }
+
+        private static string GetFileName()
+        {
+            var type = _instance.GetType();
+            var attrs = type.GetCustomAttributes(typeof(OptionsAttribute), false);
+            return ((OptionsAttribute) attrs[0]).FileName;
         }
     }
 }

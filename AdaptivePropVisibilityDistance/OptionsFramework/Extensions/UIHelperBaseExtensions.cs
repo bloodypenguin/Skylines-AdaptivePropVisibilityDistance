@@ -8,11 +8,11 @@ using ColossalFramework.UI;
 using ICities;
 using UnityEngine;
 
-namespace AdaptivePropVisibilityDistance.OptionsFramework
+namespace AdaptivePropVisibilityDistance.OptionsFramework.Extensions
 {
-    public static class UIHelperBaseExtension
+    public static class UIHelperBaseExtensions
     {
-        public static IEnumerable<UIComponent> AddOptionsGroup<T>(this UIHelperBase helper) where T : IModOptions
+        public static IEnumerable<UIComponent> AddOptionsGroup<T>(this UIHelperBase helper)
         {
             var result = new List<UIComponent>();
             var properties = (from property in typeof(T).GetProperties() select property.Name).Where(name => name != "FileName");
@@ -45,7 +45,7 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
             return result;
         }
 
-        private static UIComponent ProcessProperty<T>(this UIHelperBase group, string name, string description) where T : IModOptions
+        private static UIComponent ProcessProperty<T>(this UIHelperBase group, string name, string description)
         {
             var checkboxAttribute = OptionsWrapper<T>.Options.GetAttribute<T, CheckboxAttribute>(name);
             if (checkboxAttribute != null)
@@ -71,7 +71,7 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
             return null;
         }
 
-        private static UIDropDown AddDropdown<T>(this UIHelperBase group, string text, string propertyName, DropDownAttribute attr) where T : IModOptions
+        private static UIDropDown AddDropdown<T>(this UIHelperBase group, string text, string propertyName, DropDownAttribute attr)
         {
             var property = typeof(T).GetProperty(propertyName);
             var defaultCode = (int)property.GetValue(OptionsWrapper<T>.Options, null);
@@ -94,7 +94,7 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
            });
         }
 
-        private static UICheckBox AddCheckbox<T>(this UIHelperBase group, string text, string propertyName, CheckboxAttribute attr) where T : IModOptions
+        private static UICheckBox AddCheckbox<T>(this UIHelperBase group, string text, string propertyName, CheckboxAttribute attr)
         {
             var property = typeof(T).GetProperty(propertyName);
             return (UICheckBox)group.AddCheckbox(text, (bool)property.GetValue(OptionsWrapper<T>.Options, null),
@@ -106,7 +106,7 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
                 });
         }
 
-        private static UITextField AddTextfield<T>(this UIHelperBase group, string text, string propertyName, TextfieldAttribute attr) where T : IModOptions
+        private static UITextField AddTextfield<T>(this UIHelperBase group, string text, string propertyName, TextfieldAttribute attr)
         {
             var property = typeof(T).GetProperty(propertyName);
             var initialValue = Convert.ToString(property.GetValue(OptionsWrapper<T>.Options, null));
@@ -140,7 +140,7 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
                 });
         }
 
-        private static UISlider AddSlider<T>(this UIHelperBase group, string text, string propertyName, SliderAttribute attr) where T : IModOptions
+        private static UISlider AddSlider<T>(this UIHelperBase group, string text, string propertyName, SliderAttribute attr)
         {
             var property = typeof(T).GetProperty(propertyName);
             UILabel valueLabel = null;

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AdaptivePropVisibilityDistance.Redirection
+namespace AdaptivePropVisibilityDistance.Redirection.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public class TargetTypeAttribute : Attribute

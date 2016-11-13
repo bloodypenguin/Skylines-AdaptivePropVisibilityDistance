@@ -1,4 +1,6 @@
-﻿namespace AdaptivePropVisibilityDistance.Redirection
+﻿using AdaptivePropVisibilityDistance.Redirection.Extensions;
+
+namespace AdaptivePropVisibilityDistance.Redirection
 {
     public class Redirector<T>
     {

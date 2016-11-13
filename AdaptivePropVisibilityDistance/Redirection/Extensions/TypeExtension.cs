@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace AdaptivePropVisibilityDistance.Redirection
+namespace AdaptivePropVisibilityDistance.Redirection.Extensions
 {
     public static class TypeExtension
     {

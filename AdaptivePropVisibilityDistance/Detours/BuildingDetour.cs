@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using AdaptivePropVisibilityDistance.Redirection;
+using AdaptivePropVisibilityDistance.Redirection.Attributes;
 using ColossalFramework;
 using UnityEngine;
 

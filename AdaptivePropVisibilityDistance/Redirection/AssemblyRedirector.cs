@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using AdaptivePropVisibilityDistance.Redirection;
+using AdaptivePropVisibilityDistance.Redirection.Extensions;
 
 namespace AdaptivePropVisibilityDistance.Redirection
 {

@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using AdaptivePropVisibilityDistance.Redirection;
+using AdaptivePropVisibilityDistance.Redirection.Attributes;
 using UnityEngine;
 
 namespace AdaptivePropVisibilityDistance.Detours

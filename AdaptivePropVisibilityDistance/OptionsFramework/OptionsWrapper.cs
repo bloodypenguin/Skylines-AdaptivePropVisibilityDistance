@@ -49,24 +49,29 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
         {
             try
             {
-                var xmlSerializer = new XmlSerializer(typeof(T));
-                var fileName = Path.Combine(DataLocation.localApplicationData, GetFileName());
-                if (!fileName.EndsWith(".xml"))
+                if (GetLegacyFileName() != string.Empty)
                 {
-                    fileName = fileName + ".xml";
-                }
-                using (var streamReader = new StreamReader(fileName))
-                {
-                    var options = (T)xmlSerializer.Deserialize(streamReader);
-                    foreach (var propertyInfo in typeof(T).GetProperties())
+                    try
                     {
-                        if (!propertyInfo.CanWrite)
+                        ReadOptionsFile(GetLegacyFileName());
+                        try
                         {
-                            continue;
+                            File.Delete(GetLegacyFileName());
                         }
-                        var value = propertyInfo.GetValue(options, null);
-                        propertyInfo.SetValue(_instance, value, null);
+                        catch (Exception e)
+                        {
+                            UnityEngine.Debug.LogException(e);
+                        }
+                        SaveOptions();
                     }
+                    catch (FileNotFoundException)
+                    {
+                        ReadOptionsFile(GetFileName());
+                    }
+                }
+                else
+                {
+                    ReadOptionsFile(GetFileName());
                 }
             }
             catch (FileNotFoundException)
@@ -75,17 +80,30 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
             }
         }
 
+        private static void ReadOptionsFile(string fileName)
+        {
+            var xmlSerializer = new XmlSerializer(typeof(T));
+            using (var streamReader = new StreamReader(fileName))
+            {
+                var options = (T) xmlSerializer.Deserialize(streamReader);
+                foreach (var propertyInfo in typeof(T).GetProperties())
+                {
+                    if (!propertyInfo.CanWrite)
+                    {
+                        continue;
+                    }
+                    var value = propertyInfo.GetValue(options, null);
+                    propertyInfo.SetValue(_instance, value, null);
+                }
+            }
+        }
+
         internal static void SaveOptions()
         {
             try
             {
                 var xmlSerializer = new XmlSerializer(typeof(T));
-                var fileName = Path.Combine(DataLocation.localApplicationData, GetFileName());
-                if (!fileName.EndsWith(".xml"))
-                {
-                    fileName = fileName + ".xml";
-                }
-                using (var streamWriter = new StreamWriter(fileName))
+                using (var streamWriter = new StreamWriter(GetFileName()))
                 {
                     xmlSerializer.Serialize(streamWriter, _instance);
                 }
@@ -100,7 +118,28 @@ namespace AdaptivePropVisibilityDistance.OptionsFramework
         {
             var type = _instance.GetType();
             var attrs = type.GetCustomAttributes(typeof(OptionsAttribute), false);
-            return ((OptionsAttribute) attrs[0]).FileName;
+            var fileName = Path.Combine(DataLocation.localApplicationData, ((OptionsAttribute) attrs[0]).FileName);
+            if (!fileName.EndsWith(".xml"))
+            {
+                fileName = fileName + ".xml";
+            }
+            return fileName;
+        }
+
+        private static string GetLegacyFileName()
+        {
+            var type = _instance.GetType();
+            var attrs = type.GetCustomAttributes(typeof(OptionsAttribute), false);
+            var fileName =  ((OptionsAttribute)attrs[0]).LegacyFileName;
+            if (fileName == string.Empty)
+            {
+                return fileName;
+            }
+            if (!fileName.EndsWith(".xml"))
+            {
+                fileName = fileName + ".xml";
+            }
+            return fileName;
         }
     }
 }

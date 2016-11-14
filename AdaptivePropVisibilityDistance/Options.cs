@@ -11,10 +11,12 @@ namespace AdaptivePropVisibilityDistance
 
         public Options()
         {
+            FallbackRenderDistanceProps = 1000f;
             LodDistanceMultiplierProps = 0.25f;
             LodFactorMultiplierProps = 200f;
             DistanceOffsetProps = 100f;
 
+            FallbackLodFactorMultiplierTrees = 300f;
             LodDistanceMultiplierTrees = 0.25f;
             LodFactorMultiplierTrees = 200f;
             DistanceOffsetTrees = 100f;
@@ -29,6 +31,9 @@ namespace AdaptivePropVisibilityDistance
         [Slider("LOD distance multiplier (default: 0.25)", 0.05f, 1.0f, 0.05f, PROPS, nameof(Refresher), nameof(Refresher.Refresh))]
         public float LodDistanceMultiplierProps { get; private set; }
 
+        [Slider("Fallback render distance (default: 1000)", 1000f, 100000f, 1000f, PROPS, nameof(Refresher), nameof(Refresher.Refresh))]
+        public float FallbackRenderDistanceProps { get; private set; }
+
         [Slider("LOD factor multiplier (default: 200)", 1f, 1000f, 1f, TREES, nameof(Refresher), nameof(Refresher.Refresh))]
         public float LodFactorMultiplierTrees { get; private set; }
 
@@ -38,6 +43,9 @@ namespace AdaptivePropVisibilityDistance
         [Slider("LOD distance multiplier (default: 0.25)", 0.05f, 1.0f, 0.05f, TREES, nameof(Refresher), nameof(Refresher.Refresh))]
         public float LodDistanceMultiplierTrees { get; private set; }
 
+        [Slider("Fallback LOD factor multiplier (default: 300)", 1f, 1000f, 1f, TREES, nameof(Refresher), nameof(Refresher.Refresh))]
+        public float FallbackLodFactorMultiplierTrees { get; private set; }
+
         //hardcoded
 
         [XmlIgnore]
@@ -45,8 +53,5 @@ namespace AdaptivePropVisibilityDistance
 
         [XmlIgnore]
         public const float RenderDistanceThresholdEffects = 100000f; //1000f default
-
-        [XmlIgnore]
-        public const float FallbackRenderDistance = 1000f;//1000f default
     }
 }

@@ -12,13 +12,13 @@ namespace AdaptivePropVisibilityDistance.Detours
         [RedirectMethod]
         public override void RefreshLevelOfDetail()
         {
-            float num = RenderManager.LevelOfDetailFactor * OptionsWrapper<Options>.Options.LodFactorMultiplierProps;
-            if (m_generatedInfo.m_triangleArea == 0.0f)
+            if (m_generatedInfo.m_triangleArea == 0.0f || float.IsNaN(m_generatedInfo.m_triangleArea))
             {
-                m_maxRenderDistance = Options.FallbackRenderDistance;
+                m_maxRenderDistance = OptionsWrapper<Options>.Options.FallbackRenderDistanceProps;
             }
             else
             {
+                float num = RenderManager.LevelOfDetailFactor * OptionsWrapper<Options>.Options.LodFactorMultiplierProps;
                 m_maxRenderDistance = (float)(Mathf.Sqrt(m_generatedInfo.m_triangleArea) * (double)num + OptionsWrapper<Options>.Options.DistanceOffsetProps);
                 this.m_maxRenderDistance = Mathf.Min(Options.RenderDistanceThreshold, this.m_maxRenderDistance);
             }

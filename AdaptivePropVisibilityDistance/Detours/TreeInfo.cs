@@ -10,13 +10,13 @@ namespace AdaptivePropVisibilityDistance.Detours
         [RedirectMethod]
         public override void RefreshLevelOfDetail()
         {
-            float num = RenderManager.LevelOfDetailFactor * OptionsWrapper<Options>.Options.LodFactorMultiplierTrees;
-            if (m_generatedInfo.m_triangleArea == 0.0f)
+            if (m_generatedInfo.m_triangleArea == 0.0f || float.IsNaN(m_generatedInfo.m_triangleArea))
             {
-                m_lodRenderDistance = Options.FallbackRenderDistance * OptionsWrapper<Options>.Options.LodDistanceMultiplierTrees;
+                m_lodRenderDistance = RenderManager.LevelOfDetailFactor * OptionsWrapper<Options>.Options.FallbackLodFactorMultiplierTrees;
             }
             else
             {
+                float num = RenderManager.LevelOfDetailFactor * OptionsWrapper<Options>.Options.LodFactorMultiplierTrees;
                 m_lodRenderDistance = (float)(Mathf.Sqrt(m_generatedInfo.m_triangleArea) * (double)num + OptionsWrapper<Options>.Options.DistanceOffsetTrees) * OptionsWrapper<Options>.Options.LodDistanceMultiplierTrees;
             }
         }
